@@ -1,5 +1,6 @@
 package org.example.homework;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,15 +9,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 @org.springframework.stereotype.Controller
 public class Controller {
 
+    public static User currentUser;
+
     @GetMapping("/loginPage")
     public String loginPage(){
         return "LoginPage";
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam("email") String email, @RequestParam("password") String password, Model model){
+    public String login(@RequestParam("email") String email, @RequestParam("password") String password, Model model, HttpSession session){
         for (User user : DB.USERS) {
             if(user.getEmail().equals(email) && user.getPassword().equals(password)){
+                currentUser = user;
+                session.setAttribute("currentUser", currentUser);
                 model.addAttribute("tasks", DB.TASKS);
                 return "tasks";
             }
